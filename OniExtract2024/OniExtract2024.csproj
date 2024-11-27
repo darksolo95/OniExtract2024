@@ -81,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseExport.cs" />
+    <Compile Include="ExportCodex.cs" />
+    <Compile Include="model\BColor.cs" />
+    <Compile Include="model\OutCodexEntry.cs" />
     <Compile Include="ExportTag.cs" />
     <Compile Include="ExportPOString.cs" />
     <Compile Include="ExportFood.cs" />
