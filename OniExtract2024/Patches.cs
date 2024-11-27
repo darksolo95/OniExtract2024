@@ -17,6 +17,36 @@ namespace OniExtract2024
         static ExportEntity exportEntity = new ExportEntity();
         static ExportMultiEntity exportMultiEntity = new ExportMultiEntity();
         static ExportItem exportItem = new ExportItem();
+        [HarmonyPatch(typeof(CodexCache), "CodexCacheInit")]
+        internal class OniExtract_Game_Codex
+        {
+            public static ExportCodex exportCodex = new ExportCodex();
+            private static void Postfix()
+            {
+                //Debug.Log("OniExtract: " + "Export Codex");
+                exportCodex.AddCategoryEntry(CodexCache.entries);
+                exportCodex.ExportJsonFile();
+            }
+        }
+        [HarmonyPatch(typeof(ComplexRecipeManager))]
+        [HarmonyPatch("Add")]
+        public class ComplexRecipeManager_Add_Patch
+        {
+            // 在调用 Add 方法之前进行前置检查
+            static bool Prefix(ComplexRecipe recipe, List<ComplexRecipe> ___recipes)
+            {
+                foreach (ComplexRecipe recipe2 in ___recipes)
+                {
+                    if (recipe2.id == recipe.id)
+                    {
+                        // 在到达 Debug.LogError 之前拦截并跳过该方法的执行
+                        return false;
+                    }
+                }
+                // 继续执行原始方法
+                return true;
+            }
+        }
 
         [HarmonyPatch(typeof(EntityConfigManager), "RegisterEntity")]
         internal class OniExtract_Game_EntityConfig
