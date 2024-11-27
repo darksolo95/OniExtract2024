@@ -55,8 +55,12 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(GameLibsFolder)\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PLib, Version=4.15.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PLib.4.15.0\lib\net471\PLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -80,8 +84,70 @@
     <Compile Include="ExportCodex.cs" />
     <Compile Include="model\BColor.cs" />
     <Compile Include="model\OutCodexEntry.cs" />
+    <Compile Include="ExportTag.cs" />
+    <Compile Include="ExportPOString.cs" />
+    <Compile Include="ExportFood.cs" />
+    <Compile Include="ExportGeyser.cs" />
+    <Compile Include="ExportEquipment.cs" />
+    <Compile Include="ExportRecipe.cs" />
+    <Compile Include="ExportElement.cs" />
+    <Compile Include="ExportDb.cs" />
+    <Compile Include="ExportBuilding.cs" />
+    <Compile Include="ExportEntity.cs" />
+    <Compile Include="ExportUISprite.cs" />
+    <Compile Include="Mod.cs" />
+    <Compile Include="model\BColor.cs" />
+    <Compile Include="model\OutChoreGroup.cs" />
+    <Compile Include="model\OutChoreType.cs" />
+    <Compile Include="model\OutScheduleBlockType.cs" />
+    <Compile Include="model\OutScheduleGroup.cs" />
+    <Compile Include="model\OutSpice.cs" />
+    <Compile Include="model\OutStatusItem.cs" />
+    <Compile Include="model\OutStorage.cs" />
+    <Compile Include="model\OutStory.cs" />
+    <Compile Include="model\OutTech.cs" />
+    <Compile Include="model\OutTechItem.cs" />
+    <Compile Include="model\OutTrait.cs" />
+    <Compile Include="model\OutTraitGroup.cs" />
+    <Compile Include="model\BBuildingEntity.cs" />
+    <Compile Include="model\BuildMenuCategory.cs" />
+    <Compile Include="model\OutConduitConsumer.cs" />
+    <Compile Include="model\OutConduitDispenser.cs" />
+    <Compile Include="model\OutConsumedElement.cs" />
+    <Compile Include="model\OutElementConsumer.cs" />
+    <Compile Include="model\OutElementConverter.cs" />
+    <Compile Include="model\OutEnergyGenerator.cs" />
+    <Compile Include="model\OutOperational.cs" />
+    <Compile Include="model\OutOutputElement.cs" />
+    <Compile Include="model\OutPassiveElementConsumer.cs" />
+    <Compile Include="model\OutPlantablePlot.cs" />
+    <Compile Include="model\BVector2.cs" />
+    <Compile Include="model\OutBlightVulnerable.cs" />
+    <Compile Include="model\OutComet.cs" />
+    <Compile Include="model\OutDecorProvider.cs" />
+    <Compile Include="model\OutDecorToggler.cs" />
+    <Compile Include="model\OutDrowningMonitor.cs" />
+    <Compile Include="model\OutFactionAlignment.cs" />
+    <Compile Include="model\OutGrowing.cs" />
+    <Compile Include="model\OutHealth.cs" />
+    <Compile Include="model\OutIlluminationVulnerable.cs" />
+    <Compile Include="model\OutIncubationMonitorDef.cs" />
+    <Compile Include="model\OutOxygenBreather.cs" />
+    <Compile Include="model\OutPickupable.cs" />
+    <Compile Include="model\OutPressureVulnerable.cs" />
+    <Compile Include="model\OutPrimaryElement.cs" />
+    <Compile Include="model\OutPrioritizable.cs" />
+    <Compile Include="model\BEntity.cs" />
+    <Compile Include="model\OutManualDeliveryKG.cs" />
+    <Compile Include="model\OutMutantPlant.cs" />
+    <Compile Include="model\OutNavigator.cs" />
+    <Compile Include="model\OutTemperatureVulnerable.cs" />
+    <Compile Include="model\BUISprite.cs" />
+    <Compile Include="model\OutWiltConditions.cs" />
+    <Compile Include="ModOptions.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="utils\AnimTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.yaml">
@@ -90,6 +156,7 @@
     <None Include="mod_info.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--Merges all dlls in the output folder into a single dll-->
@@ -102,6 +169,6 @@
   </Target>
   <!--Copies the mod dll, the two yaml files and everything inside the ModAssets folder to the target mod folder-->
   <Target Name="CopyModsToDevFolder" AfterTargets="ILRepack" Condition="'$(AssemblyName)' != 'UtilLibs' and '$(AssemblyName)' != 'Util_TwitchIntegrationLib'">
-    <Copy SourceFiles="&#xD;&#xA;      $(TargetDir)$(TargetName).dll;&#xD;&#xA;      $(TargetDir)mod.yaml;&#xD;&#xA;      $(TargetDir)mod_info.yaml;" DestinationFolder="$(ModFolder)\$(TargetName)_dev\" />
+    <Copy SourceFiles="&#xD;&#xA;      $(TargetDir)PLib.dll;&#xD;&#xA;      $(TargetDir)$(TargetName).dll;&#xD;&#xA;      $(TargetDir)mod.yaml;&#xD;&#xA;      $(TargetDir)mod_info.yaml;" DestinationFolder="$(ModFolder)\$(TargetName)_dev\" />
   </Target>
 </Project>
