@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using Path = System.IO.Path;
@@ -27,7 +27,7 @@ namespace OniExtract2024
         public string GetDatabaseLocation()
         {
             string exportDir = DatabaseDirName;
-            if (DlcManager.GetActiveDLCIds().Count == 0)
+            if (DlcManager.IsPureVanilla())
             {
                 exportDir += "_base";
             }
