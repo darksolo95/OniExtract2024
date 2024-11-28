@@ -15,7 +15,7 @@ namespace OniExtract2024
         {
             private static void Prefix(GameObject parent, List<Descriptor> descs, string effect_id, bool increase_indent)
             {
-                //Debug.Log("OniExtract: " + "Export EffectDesc");
+                Debug.Log("OniExtract: " + "Export EffectDesc");
                 exportCodex.AddEffectDesc(parent, descs, effect_id, increase_indent);
                 exportCodex.ExportJsonFile();
             }
@@ -26,7 +26,7 @@ namespace OniExtract2024
         {
             private static void Postfix()
             {
-                //Debug.Log("OniExtract: " + "Export Codex");
+                Debug.Log("OniExtract: " + "Export Codex");
                 exportCodex.AddCategoryEntry(CodexCache.entries);
                 exportCodex.AddCategoryTree(CodexCache.entries);
                 exportCodex.ExportJsonFile();
@@ -38,7 +38,8 @@ namespace OniExtract2024
         {
             private static void Postfix()
             {
-
+                CodexCache.CodexCacheInit();
+                Debug.Log("OniExtract: " + "Loaded");
             }
         }
     }
