@@ -322,8 +322,7 @@ namespace OniExtract2024
         {
             private static void Postfix()
             {
-                CodexCache.CodexCacheInit();
-                Debug.Log("OniExtract: " + "Loaded");
+                LocString.CreateLocStringKeys(typeof(ModStrings.Options));
             }
         }
         
