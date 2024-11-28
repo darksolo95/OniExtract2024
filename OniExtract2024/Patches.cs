@@ -17,6 +17,31 @@ namespace OniExtract2024
         static ExportEntity exportEntity = new ExportEntity();
         static ExportMultiEntity exportMultiEntity = new ExportMultiEntity();
         static ExportItem exportItem = new ExportItem();
+        static ExportCodex exportCodex = new ExportCodex();
+
+        [HarmonyPatch(typeof(Klei.AI.Effect), "AddModifierDescriptions")]
+        [HarmonyPatch(new Type[] { typeof(GameObject), typeof(List<Descriptor>), typeof(string), typeof(bool) })]
+        internal class OniExtract_Game_EffectDesc
+        {
+            private static void Prefix(GameObject parent, List<Descriptor> descs, string effect_id, bool increase_indent)
+            {
+                Debug.Log("OniExtract: " + "Export EffectDesc");
+                exportCodex.AddEffectDesc(parent, descs, effect_id, increase_indent);
+                exportCodex.ExportJsonFile();
+            }
+        }
+
+        [HarmonyPatch(typeof(CodexCache), "CodexCacheInit")]
+        internal class OniExtract_Game_Codex
+        {
+            private static void Postfix()
+            {
+                Debug.Log("OniExtract: " + "Export Codex");
+                exportCodex.AddCategoryEntry(CodexCache.entries);
+                exportCodex.AddCategoryTree(CodexCache.entries);
+                exportCodex.ExportJsonFile();
+            }
+        }
 
         [HarmonyPatch(typeof(EntityConfigManager), "RegisterEntity")]
         internal class OniExtract_Game_EntityConfig
@@ -297,7 +322,8 @@ namespace OniExtract2024
         {
             private static void Postfix()
             {
-                LocString.CreateLocStringKeys(typeof(ModStrings.Options));
+                CodexCache.CodexCacheInit();
+                Debug.Log("OniExtract: " + "Loaded");
             }
         }
         
