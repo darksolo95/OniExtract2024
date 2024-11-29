@@ -8,6 +8,8 @@ using PeterHan.PLib.Options;
 using UnityEngine;
 using System.Linq;
 using STRINGS;
+using ProcGen;
+using static ClusterGridEntity;
 
 public class ExportUISprite : BaseExport
 {
@@ -35,7 +37,7 @@ public class ExportUISprite : BaseExport
 
     public void ExportAllUISprite()
     {
-        string ExportIconDir = Path.Combine(Util.RootFolder(), "export", "ui_image");
+        string ExportIconDir = System.IO.Path.Combine(Util.RootFolder(), "export", "ui_image");
         foreach (var prefab in Assets.Prefabs)
         {
             if (prefab == null || prefab.PrefabTag == null)
@@ -50,6 +52,7 @@ public class ExportUISprite : BaseExport
                 }
             }
             var formattedName = GetFormatedUIImageFileName(prefab);
+
             Element element = ElementLoader.GetElement(prefab.PrefabTag);
             if (element != null)
             {
@@ -59,22 +62,60 @@ public class ExportUISprite : BaseExport
             }
             else
             {
-                Tuple<Sprite, Color> tupleUISprite = null;
-                try
+                ClusterGridEntity gridEntity = prefab.GetComponent<ClusterGridEntity>();
+                if (gridEntity != null)
                 {
-                    tupleUISprite = Def.GetUISprite(prefab.PrefabTag);
-                }
-                catch (Exception)
-                {
-                    //Debug.LogError("OniExtract: read " + prefab.PrefabTag.Name + " Failed.");
-                }
-                if (tupleUISprite != null)
-                {
-                    Sprite UISprite = tupleUISprite.first;
-                    if (UISprite != null && UISprite != Assets.GetSprite("unknown"))
+                    //Debug.Log("Grid Entity Found:" + gridEntity.name);
+                    try
                     {
-                        AnimTool.WriteUISpriteToFile(UISprite, ExportIconDir, formattedName);
-                        this.AddUISpriteInfo(prefab, tupleUISprite, GetProperName(prefab));
+                        Sprite UISprite = null;
+                        if (DlcManager.FeatureClusterSpaceEnabled())
+                        {
+                            List<AnimConfig> animConfigs = gridEntity.AnimConfigs;
+                            if (animConfigs.Count > 0)
+                            {
+                                UISprite = Def.GetUISpriteFromMultiObjectAnim(animConfigs[0].animFile, animConfigs[0].initialAnim);
+                            }
+                        }
+                        else
+                        {
+                            WorldContainer worldContainer = gridEntity.GetComponent<WorldContainer>();
+                            if (worldContainer != null)
+                            {
+                                ProcGen.World worldData = SettingsCache.worlds.GetWorldData(worldContainer.worldName);
+                                UISprite = (worldData != null) ? Assets.GetSprite(worldData.asteroidIcon) : null;
+                            }
+                        }
+                        if (UISprite != null && UISprite != Assets.GetSprite("unknown"))
+                        {
+                            AnimTool.WriteUISpriteToFile(UISprite, ExportIconDir, formattedName);
+                            this.AddUISpriteInfo(prefab, new Tuple<Sprite, Color>(UISprite, Color.white), GetProperName(prefab));
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Debug.LogWarning("OniExtract: read " + gridEntity.name + " Failed.");
+                    }
+                }
+                else
+                {
+                    Tuple<Sprite, Color> tupleUISprite = null;
+                    try
+                    {
+                        tupleUISprite = Def.GetUISprite(prefab.PrefabTag);
+                    }
+                    catch (Exception)
+                    {
+                        //Debug.LogError("OniExtract: read " + prefab.PrefabTag.Name + " Failed.");
+                    }
+                    if (tupleUISprite != null)
+                    {
+                        Sprite UISprite = tupleUISprite.first;
+                        if (UISprite != null && UISprite != Assets.GetSprite("unknown"))
+                        {
+                            AnimTool.WriteUISpriteToFile(UISprite, ExportIconDir, formattedName);
+                            this.AddUISpriteInfo(prefab, tupleUISprite, GetProperName(prefab));
+                        }
                     }
                 }
             }
@@ -93,7 +134,7 @@ public class ExportUISprite : BaseExport
             {
                 continue;
             }
-            string ExportFacadeDir = Path.Combine(Util.RootFolder(), "export", "ui_image_facade", facadeSetId);
+            string ExportFacadeDir = System.IO.Path.Combine(Util.RootFolder(), "export", "ui_image_facade", facadeSetId);
             foreach (PermitResource permitResource in Db.Get().Permits.Permits[facadeSetId])
             {
                 if (!(permitResource.Id == "Default"))
@@ -108,7 +149,7 @@ public class ExportUISprite : BaseExport
                 }
             }
         }
-        string ExportFacadeDir2 = Path.Combine(Util.RootFolder(), "export", "ui_image_facade", Db.Get().Permits.MonumentParts.Id);
+        string ExportFacadeDir2 = System.IO.Path.Combine(Util.RootFolder(), "export", "ui_image_facade", Db.Get().Permits.MonumentParts.Id);
         foreach (MonumentPartResource monumentPart in Db.GetMonumentParts().resources)
         {
             if (!(monumentPart.Id == "Default"))

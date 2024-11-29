@@ -10,6 +10,7 @@ namespace OniExtract2024
         public ResourceGuid Guid;
         public string description;
         public string parentTechId;
+        public string[] DlcIds;
         public string[] requiredDlcIds;
         public string[] forbiddenDlcIds;
 
@@ -22,6 +23,7 @@ namespace OniExtract2024
             this.Guid = obj.Guid;
             this.description = obj.description;
             this.parentTechId = obj.parentTechId;
+            this.DlcIds = obj.dlcIds;
             this.requiredDlcIds = obj.requiredDlcIds;
             this.forbiddenDlcIds = obj.forbiddenDlcIds;
         }

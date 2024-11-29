@@ -1,4 +1,4 @@
-﻿using KSerialization;
+using KSerialization;
 using UnityEngine;
 
 namespace OniExtract2024
@@ -13,8 +13,8 @@ namespace OniExtract2024
         public float accumulatedCO2;
         [SerializeField]
         public float minCO2ToEmit = 0.3f;
-        private bool IsSuffocating = false;
-        public CellOffset[] breathableCells;
+        //private bool IsSuffocating = false;
+        //public CellOffset[] breathableCells;
 
         public OutOxygenBreather(OxygenBreather obj)
         {
@@ -24,8 +24,8 @@ namespace OniExtract2024
             this.mouthOffset = new BVector2(obj.mouthOffset);
             this.accumulatedCO2 = obj.accumulatedCO2;
             this.minCO2ToEmit = obj.minCO2ToEmit;
-            this.IsSuffocating = obj.IsSuffocating;
-            this.breathableCells = obj.breathableCells;
+            //this.IsSuffocating = obj.IsSuffocating;
+            //this.breathableCells = obj.breathableCells;
         }
     }
 }
