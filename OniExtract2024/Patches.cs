@@ -50,20 +50,25 @@ namespace OniExtract2024
             private static readonly MethodInfo RegisterExportEntityMethod = AccessTools.Method(typeof(OniExtract_Game_EntityConfig), nameof(OniExtract_Game_EntityConfig.RegisterPatch));
             static string[] tempDlcs = null;
 
-            public static void Prefix(IEntityConfig config)
-            {
-                tempDlcs = config.GetDlcIds();
-            }
+            //public static void Prefix(IEntityConfig config)
+            //{
+            //    //IHasDlcRestrictions iHasDlcRestrictions = config as IHasDlcRestrictions;
+            //    //tempDlcs = iHasDlcRestrictions.GetRequiredDlcIds();
+            //}
 
             public static GameObject RegisterPatch(GameObject gameObject)
             {
-                KPrefabID prefabID = gameObject.GetComponent<KPrefabID>();
-                BEntity bEntity = new BEntity(prefabID.PrefabID().Name, gameObject.GetComponent<KPrefabID>().Tags)
+                if (gameObject != null)
                 {
-                    dlcIds = tempDlcs
-                };
-                ExportEntity.LoadEntityComponent(gameObject, bEntity);
-                exportEntity.entities.Add(bEntity);
+                    //Debug.Log(gameObject.name);
+                    KPrefabID prefabID = gameObject.GetComponent<KPrefabID>();
+                    BEntity bEntity = new BEntity(prefabID.PrefabID().Name, gameObject.GetComponent<KPrefabID>().Tags)
+                    {
+                        dlcIds = tempDlcs
+                    };
+                    ExportEntity.LoadEntityComponent(gameObject, bEntity);
+                    exportEntity.entities.Add(bEntity);
+                }
                 return gameObject;
             }
 
@@ -111,13 +116,16 @@ namespace OniExtract2024
             {
                 foreach (var gameObject in gameObjects)
                 {
-                    KPrefabID prefabID = gameObject.GetComponent<KPrefabID>();
-                    BMultiEntity BMultiEntity = new BMultiEntity(prefabID.PrefabID().Name, gameObject.GetComponent<KPrefabID>().Tags)
+                    if (gameObject != null)
                     {
-                        entityType = entityType
-                    };
-                    exportMultiEntity.LoadEntityComponent(gameObject, BMultiEntity);
-                    exportMultiEntity.multiEntities.Add(BMultiEntity);
+                        KPrefabID prefabID = gameObject.GetComponent<KPrefabID>();
+                        BMultiEntity BMultiEntity = new BMultiEntity(prefabID.PrefabID().Name, gameObject.GetComponent<KPrefabID>().Tags)
+                        {
+                            entityType = entityType
+                        };
+                        exportMultiEntity.LoadEntityComponent(gameObject, BMultiEntity);
+                        exportMultiEntity.multiEntities.Add(BMultiEntity);
+                    }
                 }
                 return gameObjects;
             }
@@ -274,7 +282,29 @@ namespace OniExtract2024
             }
         }
 
-        [HarmonyPatch(typeof(EntityTemplates), "CreateAndRegisterSeedForPlant")]
+        [HarmonyPatch(typeof(EntityTemplates), "CreateAndRegisterSeedForPlant", new Type[] {
+            typeof(GameObject),
+            typeof(IHasDlcRestrictions),
+            typeof(SeedProducer.ProductionType),
+            typeof(string),
+            typeof(string),
+            typeof(string),
+            typeof(KAnimFile),
+            typeof(string),
+            typeof(int),
+            typeof(List<Tag>),
+            typeof(SingleEntityReceptacle.ReceptacleDirection),
+            typeof(Tag),
+            typeof(int),
+            typeof(string),
+            typeof(EntityTemplates.CollisionShape),
+            typeof(float),
+            typeof(float),
+            typeof(Recipe.Ingredient[]),
+            typeof(string),
+            typeof(bool)
+        })]
+
         internal class OniExtract_Game_Seed
         {
             private static void Postfix(ref GameObject __result)
@@ -290,18 +320,16 @@ namespace OniExtract2024
         {
             private static void Postfix(IEquipmentConfig config)
             {
-                if (!DlcManager.IsDlcListValidForCurrentContent(config.GetDlcIds()))
-                {
-                    return;
-                }
                 EquipmentDef equipmentDef = config.CreateEquipmentDef();
+                if (equipmentDef != null) { return; }
                 GameObject gameObject = EntityTemplates.CreateLooseEntity(equipmentDef.Id, equipmentDef.Name, equipmentDef.RecipeDescription, equipmentDef.Mass, unitMass: true, equipmentDef.Anim, "object", Grid.SceneLayer.Ore, equipmentDef.CollisionShape, equipmentDef.width, equipmentDef.height, isPickupable: true, 0, equipmentDef.OutputElement);
                 config.DoPostConfigure(gameObject);
                 // Add Equipment
                 KPrefabID prefabID = gameObject.AddOrGet<KPrefabID>();
+                IHasDlcRestrictions iHasDlcRestrictions = config as IHasDlcRestrictions;
                 BEquipment bEquip = new BEquipment(prefabID.PrefabID().Name, gameObject.GetComponent<KPrefabID>().Tags)
                 {
-                    dlcIds = config.GetDlcIds()
+                   dlcIds = iHasDlcRestrictions.GetRequiredDlcIds()
                 };
                 exportItem.AddEquipment(gameObject, bEquip);
             }

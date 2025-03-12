@@ -23,7 +23,7 @@ namespace OniExtract2024
             this.Guid = obj.Guid;
             this.description = obj.description;
             this.parentTechId = obj.parentTechId;
-            this.DlcIds = obj.dlcIds;
+            this.DlcIds = obj.GetRequiredDlcIds();
             this.requiredDlcIds = obj.requiredDlcIds;
             this.forbiddenDlcIds = obj.forbiddenDlcIds;
         }

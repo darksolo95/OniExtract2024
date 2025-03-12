@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OniExtract2024
@@ -7,8 +7,8 @@ namespace OniExtract2024
     {
         public EntryDevLog log = new EntryDevLog();
         //public List<ContentContainer> contentContainers = new List<ContentContainer>();
-        public string[] dlcIds;
-        public string[] forbiddenDLCIds;
+        public string[] requiredDlcIds;
+        public string[] forbiddenDlcIds;
         public string[] NONE = new string[0];
         public string id;
         public string parentId;
@@ -31,8 +31,8 @@ namespace OniExtract2024
         public OutCodexEntry(CodexEntry codexEntry) {
             this.log = codexEntry.log;
             //this.contentContainers = codexEntry.contentContainers;
-            this.dlcIds = codexEntry.dlcIds;
-            this.forbiddenDLCIds = codexEntry.forbiddenDLCIds;
+            this.requiredDlcIds = codexEntry.requiredDlcIds;
+            this.forbiddenDlcIds = codexEntry.forbiddenDlcIds;
             this.id = codexEntry.id;
             this.parentId = codexEntry.parentId;
             this.category = codexEntry.category;
