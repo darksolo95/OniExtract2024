@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using OniExtract2024;
 using Klei.AI;
@@ -7,7 +7,7 @@ public class ExportMultiEntity : BaseExport
 {
     public override string ExportFileName { get; set; } = "multiEntities";
     public List<BMultiEntity> multiEntities;
-    private Dictionary<string, OutMeteorShowerEvent> meteorShowerEventMap = new Dictionary<string, OutMeteorShowerEvent>();
+    public Dictionary<string, OutMeteorShowerEvent> meteorShowerEventMap = new Dictionary<string, OutMeteorShowerEvent>();
 
     public ExportMultiEntity()
     {
@@ -19,6 +19,26 @@ public class ExportMultiEntity : BaseExport
         if(!meteorShowerEventMap.ContainsKey(obj.id))
         {
             meteorShowerEventMap.Add(obj.id, obj);
+        }
+    }
+
+    public void updateAllMeteorShowEvent()
+    {
+        foreach(var keyValuePair in meteorShowerEventMap)
+        {
+            GameplayEvent gplay = Db.Get().GameplayEvents.Get(keyValuePair.Key);
+            if (gplay != null)
+            {
+                var gameplayEvent = gplay as MeteorShowerEvent;
+                var meteorShowerEvent = keyValuePair.Value;
+                meteorShowerEvent.bombardmentInfo = gameplayEvent.GetMeteorsInfo();
+                meteorShowerEvent.animFileName = gameplayEvent.animFileName;
+                meteorShowerEvent.tags = gameplayEvent.tags;
+                meteorShowerEvent.Name = gameplayEvent.Name;
+                meteorShowerEvent.IdHash = gameplayEvent.IdHash;
+                meteorShowerEvent.allowMultipleEventInstances = gameplayEvent.allowMultipleEventInstances;
+                meteorShowerEvent.numTimesAllowed = gameplayEvent.numTimesAllowed;
+            }
         }
     }
 
@@ -57,6 +77,7 @@ public class ExportMultiEntity : BaseExport
         HarvestablePOIConfigurator harvestablePOIConfigurator = gameObject.GetComponent<HarvestablePOIConfigurator>();
         if (harvestablePOIConfigurator != null)
         {
+            bEntity.harvestablePOIConfigurator = harvestablePOIConfigurator;
             bEntity.harvestablePOIType = HarvestablePOIConfigurator.FindType(harvestablePOIConfigurator.presetType);
         }
         HarvestablePOIClusterGridEntity harvestablePOIClusterGridEntity = gameObject.GetComponent<HarvestablePOIClusterGridEntity>();
@@ -68,6 +89,17 @@ public class ExportMultiEntity : BaseExport
         if (artifactPOIConfigurator != null)
         {
             bEntity.artifactPOIConfigurator = artifactPOIConfigurator;
+            bEntity.artifactPOIType = ArtifactPOIConfigurator.FindType(artifactPOIConfigurator.presetType);
+        }
+        SpaceArtifact spaceArtifact = gameObject.GetComponent<SpaceArtifact>();
+        if (spaceArtifact != null)
+        {
+            bEntity.spaceArtifact = new OutSpaceArtifact(spaceArtifact);
+        }
+        Light2D light2D = gameObject.GetComponent<Light2D>();
+        if (light2D != null)
+        {
+            bEntity.light2D = new OutLight2D(light2D);
         }
         GeyserConfigurator geyserConfigurator = gameObject.GetComponent<GeyserConfigurator>();
         if (geyserConfigurator != null)
@@ -101,8 +133,6 @@ public class ExportMultiEntity : BaseExport
             if (meteorShowerEventMap.ContainsKey(clusterMapMeteorShowerDef.eventID))
             {
                 OutMeteorShowerEvent meteorShowerEvent = meteorShowerEventMap[clusterMapMeteorShowerDef.eventID];
-                GameplayEvent gameplayEvent = Db.Get().GameplayEvents.Get(clusterMapMeteorShowerDef.eventID);
-                meteorShowerEvent.SetMeteorShowerEventData(gameplayEvent as MeteorShowerEvent);
                 bEntity.meteorShowerEvent = meteorShowerEvent;
             }
         }
@@ -111,5 +141,11 @@ public class ExportMultiEntity : BaseExport
         {
             bEntity.artifactPOIClusterGridEntity = artifactPOIClusterGridEntity;
         }
+        RadiationEmitter radiationEmitter = gameObject.GetComponent<RadiationEmitter>();
+        if (radiationEmitter != null)
+        {
+            bEntity.radiationEmitter = radiationEmitter;
+        }
+        
     }
 }
